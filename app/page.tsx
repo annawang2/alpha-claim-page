@@ -18,8 +18,8 @@ const AIRDROP_CONTRACT_ADDRESS = "0x9b6704Eb66de9BC08076bff7e362Bdb5799e81e7";
 const ALPHA_TOKEN_ADDRESS = "0x80EA5E177d9E588DD67ce46DdbB3D8C82b2665F8";
 
 // 1,000 ALPHA with 18 decimals = 1000 * 10^18
-// Use a string to avoid BigInt / ES2020 issues
-const CLAIM_QUANTITY = "1000000000000000000000";
+// Use BigInt constructor (no bigint literals) to keep TS happy
+const CLAIM_QUANTITY = BigInt("1000000000000000000000");
 
 // Thirdweb contract instance
 const airdropContract = getContract({
@@ -92,7 +92,7 @@ export default function ClaimPage() {
                   contract: airdropContract,
                   method:
                     "function claim(address _receiver, uint256 _quantity, bytes32[] _proofs, uint256 _proofMaxQuantityForWallet)",
-                  params: [account.address, CLAIM_QUANTITY, [], 0],
+                  params: [account.address, CLAIM_QUANTITY, [], BigInt(0)],
                 });
               }}
               onTransactionSent={() => {
