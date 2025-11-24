@@ -84,9 +84,6 @@ export default function ClaimPage() {
                   contract: airdropContract,
                   tokenAddress: ALPHA_TOKEN_ADDRESS,
                   recipient: account.address,
-
-                  // 👇 THIS FIXES THE REVERT ERROR
-                  quantity: 1n, // 1 "airdrop unit" = 1,000 ALPHA
                 });
               }}
               onTransactionSent={() => {
