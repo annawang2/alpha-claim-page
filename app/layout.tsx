@@ -1,10 +1,8 @@
-import type { Metadata } from "next";
-import "./globals.css";
 import { Providers } from "./providers";
 
-export const metadata: Metadata = {
+export const metadata = {
   title: "ALPHA Network Airdrop",
-  description: "Claim your ALPHA Network founding member airdrop.",
+  description: "Claim your ALPHA tokens",
 };
 
 export default function RootLayout({
@@ -14,7 +12,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>
+      <body style={{ margin: 0, padding: 0, backgroundColor: '#000', color: '#fff' }}>
         <Providers>{children}</Providers>
       </body>
     </html>
