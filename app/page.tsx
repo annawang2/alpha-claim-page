@@ -23,9 +23,10 @@ const airdropContract = getContract({
   chain: ethereum,
 });
 
+// Enable MetaMask + WalletConnect on the front end
 const wallets = [
   createWallet("io.metamask"),
-  createWallet("walletConnect"), // ✅ WalletConnect
+  createWallet("walletConnect"),
 ];
 
 export default function ClaimPage() {
@@ -83,13 +84,18 @@ export default function ClaimPage() {
                   contract: airdropContract,
                   tokenAddress: ALPHA_TOKEN_ADDRESS,
                   recipient: account.address,
+
+                  // 👇 THIS FIXES THE REVERT ERROR
+                  quantity: 1n, // 1 "airdrop unit" = 1,000 ALPHA
                 });
               }}
               onTransactionSent={() => {
                 alert("Transaction submitted! Confirm it in your wallet.");
               }}
               onTransactionConfirmed={() => {
-                alert("Success! 🎉 Your 1,000 ALPHA tokens should arrive shortly.");
+                alert(
+                  "Success! 🎉 Your 1,000 ALPHA tokens should arrive shortly."
+                );
               }}
               onError={(err) => {
                 console.error(err);
