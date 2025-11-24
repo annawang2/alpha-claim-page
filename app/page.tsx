@@ -1,29 +1,32 @@
 "use client";
 
-import { createWallet } from "thirdweb/wallets";
 import Image from "next/image";
 import { client } from "./client";
+
 import {
   ConnectButton,
   TransactionButton,
   useActiveAccount,
 } from "thirdweb/react";
-import { getContract } from "thirdweb";
+
+import { getContract, prepareContractCall } from "thirdweb";
 import { ethereum } from "thirdweb/chains";
-import { claimERC20 } from "thirdweb/extensions/airdrop";
+import { createWallet } from "thirdweb/wallets";
 
-// 🔥 REPLACE THIS WITH YOUR WORKING AIRDROP CONTRACT ADDRESS
+// Airdrop contract + token
 const AIRDROP_CONTRACT_ADDRESS = "0x9b6704Eb66de9BC08076bff7e362Bdb5799e81e7";
+const ALPHA_TOKEN_DECIMALS = 18n;
+const ALPHA_PER_WALLET = 1000n;
+const CLAIM_QUANTITY = ALPHA_PER_WALLET * 10n ** ALPHA_TOKEN_DECIMALS;
 
-const ALPHA_TOKEN_ADDRESS = "0x80EA5E177d9E588DD67ce46DdbB3D8C82b2665F8";
-
+// Thirdweb contract instance
 const airdropContract = getContract({
   client,
   address: AIRDROP_CONTRACT_ADDRESS,
   chain: ethereum,
 });
 
-// Enable MetaMask + WalletConnect on the front end
+// Wallet options (MetaMask + WalletConnect)
 const wallets = [
   createWallet("io.metamask"),
   createWallet("walletConnect"),
@@ -70,8 +73,8 @@ export default function ClaimPage() {
                 </span>
               </p>
               <p>
-                Click the button below to claim your 1,000 ALPHA tokens. This
-                is a one-time claim per wallet.
+                Click the button below to claim your 1,000 ALPHA tokens. This is
+                a one-time claim per wallet.
               </p>
             </div>
 
@@ -80,10 +83,14 @@ export default function ClaimPage() {
                 if (!account) {
                   throw new Error("No wallet connected");
                 }
-                return claimERC20({
+
+                // Call the contract's claim function directly:
+                // claim(address _receiver, uint256 _quantity, bytes32[] _proofs, uint256 _proofMaxQuantityForWallet)
+                return prepareContractCall({
                   contract: airdropContract,
-                  tokenAddress: ALPHA_TOKEN_ADDRESS,
-                  recipient: account.address,
+                  method:
+                    "function claim(address _receiver, uint256 _quantity, bytes32[] _proofs, uint256 _proofMaxQuantityForWallet)",
+                  params: [account.address, CLAIM_QUANTITY, [], 0n],
                 });
               }}
               onTransactionSent={() => {
@@ -97,7 +104,7 @@ export default function ClaimPage() {
               onError={(err) => {
                 console.error(err);
                 alert(
-                  err.message ||
+                  (err as any)?.message ||
                     "Claim failed. You may have already claimed or the airdrop may be complete."
                 );
               }}
