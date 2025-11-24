@@ -47,8 +47,14 @@ export default function ClaimPage() {
         <div className="connect">
           <ConnectButton
             client={client}
-            theme="dark"
-            connectButton={{ label: "Connect wallet to claim" }}
+             wallets={[
+              { id: "io.metamask" },
+              { id: "walletConnect" },   // ✅ WalletConnect enabled
+  ]}
+  theme="dark"
+  connectButton={{ label: "Connect wallet to claim" }}
+/>
+
           />
         </div>
 
