@@ -1,5 +1,6 @@
 "use client";
 
+import { createWallet } from "thirdweb/wallets";
 import Image from "next/image";
 import { client } from "./client";
 import {
@@ -21,6 +22,11 @@ const airdropContract = getContract({
   address: AIRDROP_CONTRACT_ADDRESS,
   chain: ethereum,
 });
+
+const wallets = [
+  createWallet("io.metamask"),
+  createWallet("walletConnect"), // ✅ WalletConnect
+];
 
 export default function ClaimPage() {
   const account = useActiveAccount();
@@ -47,14 +53,9 @@ export default function ClaimPage() {
         <div className="connect">
           <ConnectButton
             client={client}
-             wallets={[
-              { id: "io.metamask" },
-              { id: "walletConnect" },   // ✅ WalletConnect enabled
-  ]}
-  theme="dark"
-  connectButton={{ label: "Connect wallet to claim" }}
-/>
-
+            wallets={wallets}
+            theme="dark"
+            connectButton={{ label: "Connect wallet to claim" }}
           />
         </div>
 
@@ -88,9 +89,7 @@ export default function ClaimPage() {
                 alert("Transaction submitted! Confirm it in your wallet.");
               }}
               onTransactionConfirmed={() => {
-                alert(
-                  "Success! 🎉 Your 1,000 ALPHA tokens should arrive shortly."
-                );
+                alert("Success! 🎉 Your 1,000 ALPHA tokens should arrive shortly.");
               }}
               onError={(err) => {
                 console.error(err);
